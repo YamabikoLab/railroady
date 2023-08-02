@@ -2,11 +2,11 @@
 
 [![Build Status](https://travis-ci.org/preston/railroady.svg?branch=master)](https://travis-ci.org/preston/railroady)
 
-RailRoady generates Rails 3/4/5 model (ActiveRecord, Mongoid, Datamapper) and controller UML diagrams as cross-platform .svg files, as well as in the DOT language.
+RailRoady generates Rails model (ActiveRecord, Mongoid, Datamapper) and controller UML diagrams as cross-platform .svg files, as well as in the DOT language.
 
 Code is based on the original "railroad" gem, patched and maintained over the years. Lineage can be traced via GitHub.
 
-I (Preston Lee) am not trying to hijack Peter Hoeg or Javier's project, but rather create a dedicated, lean gem that can be used without major issue on Rails projects. Rails v2 is not supported.
+I (Preston Lee) am not trying to hijack Peter Hoeg or Javier's project, but rather create a dedicated, lean gem that can be used without major issue on Rails projects.
 
 # System Requirements
 
