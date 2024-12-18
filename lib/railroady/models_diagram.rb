@@ -107,6 +107,8 @@ class ModelsDiagram < AppDiagram
   end
 
   def process_active_record_model(current_class)
+    return unless @selected_models.nil? || @selected_models.include?(current_class.name)
+
     node_attribs = { fields: [], public: [] }
     if @options.brief || current_class.abstract_class?
       node_type = 'model-brief'
