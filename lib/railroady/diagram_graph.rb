@@ -83,9 +83,9 @@ class DiagramGraph
       options = 'shape=box'
     when 'controller'
       options = "shape=Mrecord, label=\"{#{name}|"
-      public_methods    = attributes[:public].sort_by    { |s| @alphabetize ? s : nil }.join('\l')
-      protected_methods = attributes[:protected].sort_by { |s| @alphabetize ? s : nil }.join('\l')
-      private_methods   = attributes[:private].sort_by   { |s| @alphabetize ? s : nil }.join('\l')
+      public_methods    = Array(attributes[:public]).sort_by    { |s| @alphabetize ? s : nil }.join('\l')
+      protected_methods = Array(attributes[:protected]).sort_by { |s| @alphabetize ? s : nil }.join('\l')
+      private_methods   = Array(attributes[:private]).sort_by   { |s| @alphabetize ? s : nil }.join('\l')
       options += "#{public_methods}\\l|#{protected_methods}\\l|#{private_methods}\\l"
       options += '}"'
     when 'controller-brief'
