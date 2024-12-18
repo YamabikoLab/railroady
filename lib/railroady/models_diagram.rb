@@ -12,9 +12,12 @@ class ModelsDiagram < AppDiagram
   # Process model files
   def generate
     warn 'Generating models diagram' if @options.verbose
+    @selected_models = []
     get_files.each do |f|
       begin
-        process_class extract_class_name(f).constantize
+        className = extract_class_name(f).constantize
+        @selected_models << className.name
+        process_class className
       rescue NoMethodError
         warn "Warning: exception #{$ERROR_INFO} raised while trying to load model class #{f}"
       end
