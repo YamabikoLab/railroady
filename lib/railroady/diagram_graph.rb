@@ -65,6 +65,9 @@ class DiagramGraph
 
   # Build a DOT graph node
   def dot_node(type, name, attributes = nil, custom_options = '')
+    # モデルが@selected_modelsに含まれていない場合はスキップ
+    return unless @selected_models.nil? || @selected_models.include?(name)
+
     case type
     when 'model'
       options = "shape=Mrecord, label=\"{#{name}|"

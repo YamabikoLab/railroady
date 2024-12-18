@@ -275,7 +275,7 @@ class ModelsDiagram < AppDiagram
 
     # 関連モデルが@selected_modelsに含まれていない場合はスキップ
     return unless @selected_models.nil? || @selected_models.include?(assoc_class_name)
-    
+
     warn "- Processing model association #{assoc.name}" if @options.verbose
     # Skip "belongs_to" associations
     macro = assoc.methods.to_s
