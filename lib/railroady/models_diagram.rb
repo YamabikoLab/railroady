@@ -270,6 +270,12 @@ class ModelsDiagram < AppDiagram
 
   # Process a model association
   def process_association(class_name, assoc)
+    assoc_class_name = assoc.class_name rescue nil
+    assoc_class_name ||= assoc.name.to_s.underscore.singularize.camelize
+
+    # 関連モデルが@selected_modelsに含まれていない場合はスキップ
+    return unless @selected_models.nil? || @selected_models.include?(assoc_class_name)
+    
     warn "- Processing model association #{assoc.name}" if @options.verbose
     # Skip "belongs_to" associations
     macro = assoc.methods.to_s
