@@ -131,10 +131,6 @@ class ModelsDiagram < AppDiagram
         content_column += " :#{a.sql_type.to_s}" unless @options.hide_types
         node_attribs << content_column
       end
-
-      # Collect public instance methods
-      public_methods = current_class.public_instance_methods(false).map(&:to_s)
-      node_attribs.concat(public_methods)
     end
     @graph.add_node [node_type, current_class.name, node_attribs]
 
@@ -156,8 +152,9 @@ class ModelsDiagram < AppDiagram
   end
 
   def process_datamapper_model(current_class)
-    node_attribs = []
-    if @options.brief # || current_class.abstract_class?
+    node_attribs = { fields: [], public: [] }
+
+    if @options.brief
       node_type = 'model-brief'
     else
       node_type = 'model'
@@ -166,25 +163,25 @@ class ModelsDiagram < AppDiagram
       props = current_class.properties.sort_by(&:name)
 
       if @options.hide_magic
-        # From patch #13351
-        # http://wiki.rubyonrails.org/rails/pages/MagicFieldNames
-        magic_fields =
-          %w[created_at created_on updated_at updated_on lock_version _type _id position parent_id lft rgt quote template]
+        magic_fields = %w[created_at created_on updated_at updated_on lock_version _type _id position parent_id lft rgt quote template]
         props = props.reject { |c| magic_fields.include?(c.name.to_s) }
       end
 
       props.each do |a|
         prop = a.name.to_s
         prop += " :#{a.class.name.split('::').last}" unless @options.hide_types
-        node_attribs << prop
+        node_attribs[:fields] << prop
       end
+
+      # Collect model's public methods
+      public_methods = current_class.public_instance_methods(false).map(&:to_s)
+      node_attribs[:public].concat(public_methods)
     end
+
     @graph.add_node [node_type, current_class.name, node_attribs]
 
     # Process relationships
     relationships = current_class.relationships
-
-    # TODO: Manage inheritance
 
     relationships.each do |a|
       process_datamapper_relationship current_class.name, a
@@ -194,7 +191,7 @@ class ModelsDiagram < AppDiagram
   end
 
   def process_mongoid_model(current_class)
-    node_attribs = []
+    node_attribs = { fields: [], public: [] }
 
     if @options.brief
       node_type = 'model-brief'
@@ -205,8 +202,6 @@ class ModelsDiagram < AppDiagram
       content_columns = current_class.fields.values.sort_by(&:name)
 
       if @options.hide_magic
-        # From patch #13351
-        # http://wiki.rubyonrails.org/rails/pages/MagicFieldNames
         magic_fields = %w[created_at created_on updated_at updated_on lock_version _type _id position parent_id lft rgt quote template]
         content_columns = content_columns.reject { |c| magic_fields.include?(c.name) }
       end
@@ -214,8 +209,12 @@ class ModelsDiagram < AppDiagram
       content_columns.each do |a|
         content_column = a.name
         content_column += " :#{a.type}" unless @options.hide_types
-        node_attribs << content_column
+        node_attribs[:fields] << content_column
       end
+
+      # Collect model's public methods
+      public_methods = current_class.public_instance_methods(false).map(&:to_s)
+      node_attribs[:public].concat(public_methods)
     end
 
     @graph.add_node [node_type, current_class.name, node_attribs]
@@ -224,7 +223,7 @@ class ModelsDiagram < AppDiagram
     associations = current_class.relations.values
 
     if @options.inheritance && !@options.transitive &&
-       current_class.superclass.respond_to?(:relations)
+      current_class.superclass.respond_to?(:relations)
       associations -= current_class.superclass.relations.values
     end
 
@@ -242,7 +241,7 @@ class ModelsDiagram < AppDiagram
   # specified in a model.
   #
   def process_couchrest_model(current_class)
-    node_attribs = []
+    node_attribs = { fields: [], public: [] }
 
     if @options.brief
       node_type = 'model-brief'
@@ -260,8 +259,12 @@ class ModelsDiagram < AppDiagram
       content_columns.each do |a|
         content_column = a.name
         content_column += " :#{a.type}" unless @options.hide_types || a.type.nil?
-        node_attribs << content_column
+        node_attribs[:fields] << content_column
       end
+
+      # Collect model's public methods
+      public_methods = current_class.public_instance_methods(false).map(&:to_s)
+      node_attribs[:public].concat(public_methods)
     end
 
     @graph.add_node [node_type, current_class.name, node_attribs]
