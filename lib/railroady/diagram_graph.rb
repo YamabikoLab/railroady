@@ -68,7 +68,12 @@ class DiagramGraph
     case type
     when 'model'
       options = "shape=Mrecord, label=\"{#{name}|"
-      options += attributes.sort_by { |s| @alphabetize ? s : nil }.join('\l')
+      # フィールドとメソッドを分けるための区切り線を追加
+      fields = attributes.select { |attr| !attr.include?('(') }
+      methods = attributes.select { |attr| attr.include?('(') }
+      options += fields.sort_by { |s| @alphabetize ? s : nil }.join('\l')
+      options += '\l|'
+      options += methods.sort_by { |s| @alphabetize ? s : nil }.join('\l')
       options += '\l}"'
     when 'model-brief'
       options = ''
