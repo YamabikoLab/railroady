@@ -107,18 +107,13 @@ class ModelsDiagram < AppDiagram
   end
 
   def process_active_record_model(current_class)
-    node_attribs = []
+    node_attribs = { fields: [], public: [] }
     if @options.brief || current_class.abstract_class?
       node_type = 'model-brief'
     else
       node_type = 'model'
 
-      # Collect model's content columns
-      # content_columns = current_class.content_columns
-
       if @options.hide_magic
-        # From patch #13351
-        # http://wiki.rubyonrails.org/rails/pages/MagicFieldNames
         magic_fields = %w[created_at created_on updated_at updated_on lock_version type id position parent_id lft rgt quote template]
         magic_fields << "#{current_class.table_name}_count" if current_class.respond_to? 'table_name'
         content_columns = current_class.content_columns.reject { |c| magic_fields.include? c.name }
@@ -129,19 +124,18 @@ class ModelsDiagram < AppDiagram
       content_columns.each do |a|
         content_column = a.name
         content_column += " :#{a.sql_type.to_s}" unless @options.hide_types
-        node_attribs << content_column
+        node_attribs[:fields] << content_column
       end
+
+      public_methods = current_class.public_instance_methods(false).map(&:to_s)
+      node_attribs[:public].concat(public_methods)
     end
     @graph.add_node [node_type, current_class.name, node_attribs]
 
-    # Process class associations
     associations = current_class.reflect_on_all_associations
-    if @options.inheritance && ! @options.transitive
+    if @options.inheritance && !@options.transitive
       superclass_associations = current_class.superclass.reflect_on_all_associations
-
       associations = associations.reject { |a| superclass_associations.include? a }
-      # This doesn't works!
-      # associations -= current_class.superclass.reflect_on_all_associations
     end
 
     associations.each do |a|
