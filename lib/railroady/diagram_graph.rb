@@ -65,6 +65,8 @@ class DiagramGraph
 
   # Build a DOT graph node
   def dot_node(type, name, attributes = nil, custom_options = '')
+    warn "Selected models: #{@selected_models.inspect}"
+    warn "Current model name: #{name}"
     # モデルが@selected_modelsに含まれていない場合はスキップ
     return unless @selected_models.nil? || @selected_models.include?(name)
 
