@@ -131,6 +131,10 @@ class ModelsDiagram < AppDiagram
         content_column += " :#{a.sql_type.to_s}" unless @options.hide_types
         node_attribs << content_column
       end
+
+      # Collect public instance methods
+      public_methods = current_class.public_instance_methods(false).map(&:to_s)
+      node_attribs.concat(public_methods)
     end
     @graph.add_node [node_type, current_class.name, node_attribs]
 
