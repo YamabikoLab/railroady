@@ -69,8 +69,8 @@ class DiagramGraph
     when 'model'
       options = "shape=Mrecord, label=\"{#{name}|"
       # フィールドとメソッドを分けるための区切り線を追加
-      fields = attributes[:fields].sort_by { |s| @alphabetize ? s : nil }
-      methods = attributes[:public].sort_by { |s| @alphabetize ? s : nil }
+      fields = Array(attributes[:fields]).sort_by { |s| @alphabetize ? s : nil }
+      methods = Array(attributes[:public]).sort_by { |s| @alphabetize ? s : nil }
       options += fields.join('\l')
       options += '\l|'
       options += methods.join('\l')
