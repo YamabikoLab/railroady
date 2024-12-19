@@ -67,11 +67,11 @@ class DiagramGraph
   def dot_node(type, name, attributes = nil, custom_options = '')
     warn "Selected models: #{@selected_models.inspect}"
     warn "Current model name: #{name}"
-    # モデルが@selected_modelsに含まれていない場合はスキップ
-    return unless @selected_models.nil? || @selected_models.include?(name)
 
     case type
     when 'model'
+      # モデルが@selected_modelsに含まれていない場合はスキップ
+      return unless @selected_models.empty? || @selected_models.include?(name)
       options = "shape=Mrecord, label=\"{#{name}|"
       # フィールドとメソッドを分けるための区切り線を追加
       fields = Array(attributes[:fields]).sort_by { |s| @alphabetize ? s : nil }
